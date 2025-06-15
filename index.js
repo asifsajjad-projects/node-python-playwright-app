@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const { randomUUID } = require("crypto");
 const { default: PQueue } = require("p-queue");
+const multer = require("multer");
 
 
 const app = express();
@@ -12,7 +13,11 @@ const port = 3000;
 app.use(express.json());
 
 const outputDir = path.join(__dirname, "outputs");
+const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+
+const upload = multer({ dest: uploadDir });
 
 // Create job queue with max concurrency
 const queue = new PQueue({ concurrency: 2 }); // Adjust concurrency as needed
@@ -57,8 +62,9 @@ const runPythonJob = (inputData) => {
   });
 };
 
-app.post("/process", async (req, res) => {
+app.post("/process",upload.single("file"), async (req, res) => {
   const inputData = req.body;
+  const file_path = req.file ? path.join(__dirname, req.file.path) : null;
   try {
     const result = await queue.add(() => runPythonJob(inputData));
     res.json({ status: "completed", result });

@@ -11,5 +11,6 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - .:/app
+      - ./uploads:/app/uploads
+      - ./outputs:/app/outputs
     restart: unless-stopped
