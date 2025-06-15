@@ -7,7 +7,7 @@ const { default: PQueue } = require("p-queue");
 const multer = require("multer");
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 app.use(express.json());
 
@@ -32,7 +32,7 @@ const runPythonJob = (inputData) => {
     const filename = `${Date.now()}-${randomUUID()}.json`;
     const fullPath = path.join(outputDir, filename);
     inputData.output_file = fullPath;
-    const py = spawn("python", [path.join(__dirname, "scripts", "script.py")]);
+    const py = spawn("python3", [path.join(__dirname, "scripts", "script.py")]);
 
     let stdout = "",
       stderr = "";
@@ -77,6 +77,10 @@ app.post("/process", upload.single("file"), async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
+app.listen(port, '0.0.0.0', () => {
   console.log(`🚀 Server running at http://localhost:${port}`);
 });
