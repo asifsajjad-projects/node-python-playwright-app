@@ -9,24 +9,24 @@
 ### 🚀 Usage
 
 ```bash
-docker-compose up --build -d
+docker compose up --build -d
 ```
 ### 🛑 Stop & Remove Containers
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### 🔁 Rebuild After Code Changes
 
 ```bash
-docker-compose up --build -d
+docker compose up --build -d
 ```
 
 ### 🔍 View Logs
 
 ```bash
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ### 🐚 Get Inside the Container Shell
