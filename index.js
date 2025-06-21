@@ -29,10 +29,10 @@ const queue = new PQueue({ concurrency: 2 }); // Adjust concurrency as needed
 // Process job
 const runPythonJob = (inputData) => {
   return new Promise((resolve, reject) => {
-    const filename = `${Date.now()}-${randomUUID()}.json`;
+    const filename = `${Date.now()}-${randomUUID()}.txt`;
     const fullPath = path.join(outputDir, filename);
     inputData.output_file = fullPath;
-    const py = spawn("python3", [path.join(__dirname, "scripts", "script.py")]);
+    const py = spawn("python", [path.join(__dirname, "scripts", "browser-agent.py")]);
 
     let stdout = "",
       stderr = "";
@@ -58,7 +58,8 @@ const runPythonJob = (inputData) => {
           fullPath,
           (err) => err && console.error("Cleanup failed:", err)
         );
-        resolve(JSON.parse(fileData));
+        // resolve(JSON.parse(fileData));
+        resolve(fileData);
       } catch (err) {
         reject("Error reading output file");
       }
@@ -66,9 +67,22 @@ const runPythonJob = (inputData) => {
   });
 };
 
-app.post("/process", upload.single("file"), async (req, res) => {
-  const inputData = req.body;
-  const file_path = req.file ? path.join(__dirname, req.file.path) : null;
+app.post("/agent-task", upload.single("file"), async (req, res) => {
+  const body = req.body || {};
+  const {
+    task,
+    model = "gpt-4o-mini",
+    temperature = 0,
+    max_tokens= 4000,
+    id,
+  } = body;
+  if (!task || !id) {
+    return res.status(400).json({ error: "Missing required fields: task or id" });
+  }
+  const inputData = {
+    task
+  };
+  // const file_path = req.file ? path.join(__dirname, req.file.path) : null;
   try {
     const result = await queue.add(() => runPythonJob(inputData));
     res.json({ status: "completed", result });
