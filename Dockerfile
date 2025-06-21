@@ -1,4 +1,4 @@
-FROM node:18-bullseye
+FROM node:22
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -11,7 +11,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 #     && ln -s /usr/bin/python3.12 /usr/bin/python3 && \
 #     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN apt install -y \
+RUN apt update && \
+apt install -y \
 curl \
 gnupg \
 build-essential \
@@ -32,12 +33,11 @@ libasound2 \
 libxss1 \
 libgtk-3-0
 
-RUN add-apt-repository ppa:deadsnakes/ppa && \
-    apt update && \
-    apt install -y python3.12 python3.12-venv python3.12-distutils
+RUN apt update && \
+    apt install -y python3 python3-venv python3-pip
 
 # Install pip for Python 3.12
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12
+# RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12
 
 # Create working dir
 WORKDIR /app
@@ -47,7 +47,7 @@ COPY package*.json ./
 RUN npm install
 
 # create a virtual environment for Python
-RUN python3 -m venv .venv
+# RUN python3 -m venv .venv
 
 # # Activate the virtual environment and install Python dependencies
 # RUN . .venv/bin/activate && \
