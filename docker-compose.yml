@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: node-python-playwright-app
+    # ports:
+    #   - "3000:3000"
     expose:
       - "3001"
     environment:
