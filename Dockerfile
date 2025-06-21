@@ -36,6 +36,9 @@ libgtk-3-0
 RUN apt update && \
     apt install -y python3 python3-venv python3-pip
 
+# Create the python virtual environment
+RUN python3 -m venv /venv
+
 # Install pip for Python 3.12
 # RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12
 
@@ -60,6 +63,10 @@ RUN npm install
 # Copy all app files
 COPY . .
 
+# Activate the virtual environment and install Python dependencies
+RUN ./venv/bin/activate && \
+    pip install -r requirements.txt
+    
 # Expose the Node app port
 EXPOSE 3001
 
